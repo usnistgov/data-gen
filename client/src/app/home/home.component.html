@@ -1,0 +1,21 @@
+
+<mat-card>
+
+<div class="panel panel-info">
+  		<div class="panel-heading" style="text-align:center;"><h4> Welcome to Vaccination Test Data Generation Tool</h4>  </div>
+  		
+        <div class="panel-body">
+        	<p> This tool allows you to generate synthetic and realistic Patient and Vaccination records formatted according to the NIST extract file format specifications.</p>
+			<p> The generated data can be used to test DARQ(Data At Rest Quality Analysis tool) performance in detecting and measuring the quality of vaccination data stored in IIS. </p>
+			<p> Overall, this tool allows you to generate complex datasets. User can choose from dozens of data types (Names, addresses, telephones, IDs, CVX codes..).
+			 The user is able to define general data characteristics and proportions of records having specific values.  
+			 The User is also able to define business rules governing the relationships between individual data elements within a record, as well as across different records.</p>
+			<p>You can start generating data by using existing Templates or create new ones.</p>
+        </div>
+ </div>
+
+ 
+<div class="button-row text-center">
+  <button type="button" class="btn btn-primary btn-lg" (click)="openNewConfigurationDialog()">Start</button>
+</div>
+</mat-card>

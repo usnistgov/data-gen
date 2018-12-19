@@ -1,0 +1,17 @@
+<body style="background-color: #000080;">
+<nav class="navbar navbar-light mb-5" style="background-color: #ffd700;">
+  <a class="navbar-brand" href="/">NIST Vaccination Test Data Generation Tool</a>
+  <div class="navbar-expand mr-auto">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link active" [routerLink]="[ 'home' ]"> Home </a>
+      <a class="nav-item nav-link active" [routerLink]="[ 'faq' ]"> FAQ </a>
+      <a class="nav-item nav-link active" [routerLink]="[ 'manage' ]"> Templates </a>
+    </div>
+  </div>
+  
+</nav>
+<div style="overflow-y : scroll; padding : 70px;">
+	<router-outlet></router-outlet>
+</div>
+
+</body>

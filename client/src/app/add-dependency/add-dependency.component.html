@@ -1,0 +1,147 @@
+<mat-card>
+<div class="container">
+
+<h4>Dependency Settings</h4>
+
+<div>
+  <mat-slide-toggle [(checked)]="!showDebug" (change)="showDebug = !showDebug">Show debug info</mat-slide-toggle>
+</div>
+
+<div *ngIf="showDebug" class="debugPanel">
+ <h2>DataModel JSON Object:</h2>
+<pre>{{ config | json}}</pre>
+</div>
+
+<div>
+<strong>Dependent fields</strong>
+	<mat-form-field style="margin-left: 15px;" >
+	  <mat-select placeholder="Choose field" [(ngModel)]="field">
+	    <mat-option>-- None --</mat-option>
+	      <mat-optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name">
+	      <mat-option *ngFor="let field of datamodel.fields" [value]="field">{{field.name}}</mat-option>
+	    </mat-optgroup>
+	  </mat-select>
+	</mat-form-field>
+	
+	<mat-form-field style="margin-left: 15px;">
+	  <mat-select placeholder="Dependent Fields" [(ngModel)]="dependentfields" multiple>
+	    <mat-option>-- None --</mat-option>
+	    <mat-optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="false">
+	      <mat-option *ngFor="let field of datamodel.fields" [value]="field">{{field.name}}
+	      </mat-option>
+	    </mat-optgroup>
+	  </mat-select>
+	</mat-form-field>
+<div><strong>Conditional Constraint </strong></div>
+<div>
+<strong> If </strong>
+
+<mat-form-field style="margin-left: 15px;">
+  <mat-select placeholder="field1"  [(ngModel)]="selectedField">
+    <mat-optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="false">
+	      <mat-option *ngFor="let field of datamodel.fields" [value]="field">{{field.name}}
+	      </mat-option>
+	    </mat-optgroup>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field style="margin-left: 15px;">
+  <mat-select placeholder="Operators" [(ngModel)]="operator">
+    <mat-option>-- None --</mat-option>
+      <mat-option *ngFor="let operator of Operators" [value]="operator">{{operator}}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field style="margin-left: 15px;">
+  <mat-select placeholder="val" [(ngModel)]="variable">
+    <mat-option>-- None --</mat-option>
+      <mat-option *ngFor="let variable of selectedField.constraint.variables" [value]="variable">{{variable}}
+      </mat-option>
+  </mat-select>
+</mat-form-field>
+</div>
+
+<div>
+<strong>Then Apply constraint </strong>
+<mat-form-field style="margin-left: 15px;">
+  <mat-select placeholder="action" [(ngModel)]="selectedConstraint"  (change)="update()">
+         	<mat-optgroup *ngFor="let group of constraintGroups" [label]="group.name" [disabled]="group.disabled">
+          		<mat-option *ngFor="let constraint of group.constraints" [value]="constraint" >{{constraint.name}}</mat-option>
+          </mat-optgroup>
+  </mat-select>
+</mat-form-field>
+		<div *ngIf="selectedConstraint.id === 'SingleValue'">
+    		<div class="form-group" >
+			    <label>Set {{selectedField.name}} value to : </label>
+			    <input matInput type="text" maxlength="10" [(ngModel)]="variable"  placeholder="value" name="variable">
+			 </div>  
+    	</div>
+     
+   		<div *ngIf="selectedConstraint.id === 'FromListRand'">
+ 
+	    	<div class="input-group">
+	    	<label>Enter list of values</label>
+                <input type="text" class="form-control" placeholder="enter item" [(ngModel)]="variable" />
+                <div class="input-group-btn">
+                    <button class="btn btn-primary" type="button" (click)="addVariable(variable)"><span class="glyphicon glyphicon-search"></span></button>
+                </div>
+            </div>
+            
+            <ul class="list-group">
+		        <li *ngFor="let variable of selectedConstraint.variables" class="list-group-item">
+		            <span> {{ variable }} </span>
+		        </li>
+		    </ul>
+		    
+        </div>
+    	<div *ngIf="selectedConstraint.id === 'FromListProb'">
+    	
+    		<div class="input-group">
+	    	<label>Enter value</label>
+                <input type="text" class="form-control" placeholder="enter item" [(ngModel)]="variable" />
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" (click)="addVariable(variable)">Add</button>
+                </div>
+                
+             <label>Enter probability</label>
+             <input type="text" class="form-control" placeholder="enter probability" [(ngModel)]="prob" />
+               <div class="input-group-btn">
+                   <button class="btn btn-primary" type="button" (click)="addVariable(prob)"><span class="glyphicon glyphicon-ok"></span></button>
+               </div>  
+           </div>
+            
+            <ul class="list-group">
+		        <li *ngFor="let variable of selectedConstraint.variables" class="list-group-item">
+		            <span> {{ variable }} </span>
+		        </li>
+		    </ul>
+		    
+    	</div>
+    	
+    	<div *ngIf="selectedConstraint.id === 'SameValField'">
+    		<div class="form-group" >
+			    <label>Choose data element </label>
+			    <select class="form-control" [(ngModel)]="variable">
+		         	<optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+		          		<option *ngFor="let field of datamodel.fields" [ngValue]="field.name" >{{field.name}}</option>
+		          </optgroup>
+		        </select>
+			 </div> 
+    	</div>
+
+</div>
+</div>
+
+
+
+</div>
+
+
+<div class="form-group"  style="text-align:center;">
+	<button  name="cancel" class="btn btn-danger" (click)="cancel()" value="2"> Cancel </button>
+	<button (click)="addDependency( field , dependentfields , createCondConstraint(selectedField, operator, variable , selectedConstraint)  )"  class="btn btn-success" style="margin-left: 20px;"> Submit </button>
+</div>
+
+
+
+</mat-card>

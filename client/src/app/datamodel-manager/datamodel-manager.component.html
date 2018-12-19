@@ -1,0 +1,18 @@
+
+<mat-card>
+<div class="container">
+<div class="panel panel-info">
+  <div class="panel-heading"><h4>Existing templates</h4></div>
+  <div class="panel-body">
+  <ul>
+    <li style="list-style-type:disc" *ngFor="let conf of configurations">
+    	{{conf.id}}
+        <button class="btn btn-success btn-sm" (click)="goToConfiguration(conf.id)" style="margin-left: 30px;"> Edit</button>
+        <button class="btn btn-danger btn-sm" (click)="deleteConfiguration(conf.id)" style="margin-left: 10px;"> Delete </button>
+    </li>
+	</ul>
+</div>
+</div>
+</div>
+</mat-card>
+

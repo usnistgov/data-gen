@@ -1,0 +1,149 @@
+<div style="background-color: #ffffff; padding : 30px;"> 
+	<mat-form-field>
+		<input matInput placeholder="Template name" [(ngModel)]="configuration.name" /> 
+	</mat-form-field>
+	<div>
+		<mat-slide-toggle [(checked)]="showDebug"(change)="showDebug = !showDebug">Show debug info</mat-slide-toggle>
+	</div>
+
+	<div *ngIf="!showDebug" class="debugPanel">
+		<h2>JSON Object:</h2>
+		<pre>{{ configuration | json}}</pre>
+	</div>
+
+	<h4>Patient model</h4>
+
+	<div class="btn-group">
+		<button type="button" class="btn btn-info btn-sm btn-space"
+			(click)="addField(configuration.datamodels[0])">
+			<i class="fa fa-plus" aria-hidden="true"></i> Add Field
+		</button>
+	</div>
+	
+	<div class="btn-group" style="margin-left: 10px;">
+		<button type="button" class="btn btn-info btn-sm"
+			(click)="addDependency(configuration.datamodels[0])">
+			<i class="fa fa-plus" aria-hidden="true"></i> Add Dependency
+		</button>
+	</div>
+
+	<div class="col-mat-6">
+		<table class="table table-striped table-sm" style="width: 100%">
+			<thead>
+				<tr>
+					<th class="hidden">Id</th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Constraint</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let field of configuration.datamodels[0].fields">
+					<td class="hidden">{{field.id}}</td>
+					<td>{{field.name}}</td>
+					<td>{{field.fieldtype}}</td>
+					<td>{{field.constraint.name }}</td>
+					<td><button class="btn btn-danger btn-sm"
+							(click)="deleteField(configuration.datamodels[0],field)">
+							Delete</button>
+						<button class="btn btn-warning btn-sm" (click)="editField(field, configuration.datamodels[0])"
+							style="margin-left: 20px;">Edit</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h4>Patient Model Dependencies</h4>
+	<div class="col-mat-6">
+		<table class="table table-striped table-sm" style="width: 100%">
+			<thead>
+				<tr>
+					<th>Field</th>
+					<th>Dependent Fields</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let dependency of configuration.datamodels[0].dependencies">
+					<td>{{dependency.field1.name}}</td>
+					<td><div *ngFor="let dependentfield of dependency.dependentfields">
+					{{dependentfield.name}}</div></td>
+					<td><button class="btn btn-danger btn-sm" (click)="deleteDependency(configuration.datamodels[0], dependency)">Delete</button>
+						<button class="btn btn-warning btn-sm" (click)="editDependency(dependency)" style="margin-left: 20px;">Edit</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	
+	<div>
+	
+		<h4>Vaccine model</h4>
+		<button type="button" class="btn btn-info btn-sm"
+			(click)="addField(configuration.datamodels[1])">
+			<i class="fa fa-plus" aria-hidden="true"></i> Add Field
+		</button>
+		<button type="button" style="margin-left: 10px;"
+			class="btn btn-info btn-sm"
+			(click)="addDependency(configuration.datamodels[1])">
+			<i class="fa fa-plus" aria-hidden="true"></i> Add Dependency
+		</button>
+	</div>
+<div class="col-mat-6">
+	<table class="table table-striped table-sm" style="width: 100%">
+		<thead>
+			<tr>
+				<th class="hidden">Id</th>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Constraint</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let field of configuration.datamodels[1].fields">
+				<td class="hidden">{{field.id}}</td>
+				<td>{{field.name}}</td>
+				<td>{{field.fieldtype}}</td>
+				<td>{{field.constraint.name }}</td>
+				<td><button class="btn btn-danger btn-sm"
+						(click)="deleteField(configuration.datamodels[1] ,field)">
+						Delete</button>
+					<button class="btn btn-warning btn-sm" (click)="editField( field, configuration.datamodels[1])"
+						style="margin-left: 20px;">Edit</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<h4> Vaccine Model Dependencies</h4>
+	<div class="col-mat-6">
+		<table class="table table-striped table-sm" style="width: 100%">
+			<thead>
+				<tr>
+					<th>Field</th>
+					<th>Dependent Fields</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let dependency of configuration.datamodels[1].dependencies">
+					<td>{{dependency.field1.name}}</td>
+					<td><div *ngFor="let dependentfield of dependency.dependentfields">
+					{{dependentfield.name}}</div></td>
+					<td><button class="btn btn-danger btn-sm" (click)="deleteDependency(configuration.datamodels[1], dependency)">Delete</button>
+						<button class="btn btn-warning btn-sm" (click)="editDependency(dependency)" style="margin-left: 20px;">Edit</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+<div style="margin-top: 20px;">
+	<button type="button" class="btn btn-primary" style="text-align: center" (click)="saveConfiguration(configuration)">
+		Save template</button>
+	<button type="button" class="btn btn-primary" style="margin-left: 10px;" (click)="saveAndGo(configuration)">
+		Save and go to generation</button>
+</div>
+
+</div>

@@ -1,0 +1,111 @@
+<div style="background-color: #ffffff; padding : 15px;">
+
+<h4>Generation Settings </h4>
+
+<div>
+  <mat-slide-toggle [(checked)]="!showDebug" (change)="showDebug = !showDebug">Show debug info</mat-slide-toggle>
+</div>
+
+<div *ngIf="!showDebug" class="debugPanel">
+  <h2> JSON Object:</h2>
+  <pre>{{ generationSettings | json}}</pre>
+</div>
+
+<mat-form-field>
+  <input matInput placeholder="Chosen template" [(ngModel)]="config.name">
+</mat-form-field>
+
+<h4>Details of template </h4>
+<p>Number of datamodels : {{config.datamodels.length}}  </p>
+<div>Generation format
+	<mat-form-field style="margin-left: 20px;">
+     	<mat-select placeholder="Choose a format" [(ngModel)]="format" >
+		    <mat-option value="option1">TSV</mat-option>
+		    <mat-option value="option2" disabled>CSV</mat-option>
+		    <mat-option value="option3" disabled>JSON</mat-option>
+		</mat-select> 
+    </mat-form-field>
+</div>
+
+<p>Set up number of records to generate for every data Model</p>
+
+<div *ngFor="let model of config.datamodels">
+	<div class="form-group">
+		        <label for="name"><strong>{{model.name}}</strong></label>
+		        <select class="form-control" [(ngModel)]="generationSettings[model.name]" >
+		          <option *ngFor="let method of methods" >{{method}}</option>
+		        </select>  
+		    </div>
+	    
+	      <div *ngIf="generationSettings[model.name] === 'input a fixed number'">
+	       <label>Generate </label>
+		    <mat-form-field style="margin-left: 20px;">
+      			<input matInput  #num maxlength="10" [(ngModel)]="fixNumber" placeholder="Number">
+      		</mat-form-field>
+      		{{model.name}} records.
+    	 </div>
+    	 
+    	<div *ngIf="generationSettings[model.name] === 'number varies depending on other model'">
+    		<div> For every 
+	    	<mat-form-field style="margin-left: 15px;">
+			  <mat-select placeholder="Data models"  multiple>
+			    <mat-option>-- None --</mat-option>
+			    <mat-option *ngFor="let datamodel of config.datamodels" [value]="datamodel">{{datamodel.name}}</mat-option>
+			  </mat-select>
+			</mat-form-field>
+			generate 
+			<mat-form-field style="margin-left: 15px;">
+      			<input matInput #num maxlength="10" placeholder="Number">
+      		</mat-form-field>
+      		{{model.name}} records.
+			</div>
+		</div>
+		
+		<div *ngIf="generationSettings[model.name] === 'number varies depending on other data element value'">
+	    	<div> Choose Data Element  
+		    	<mat-form-field style="margin-left: 15px;">
+				  <mat-select placeholder="Data Elements"  [(ngModel)]="selectedfield">
+				    <mat-optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+				      <mat-option *ngFor="let field of datamodel.fields" [value]="field">{{field.name}}</mat-option>
+				    </mat-optgroup>
+				  </mat-select>
+				</mat-form-field>
+				
+			<div>Formulate condition</div>
+			<div><strong>If </strong>{{selectedfield.name}}
+				<mat-form-field style="margin-left: 15px;">
+				  <mat-select placeholder="Operator" >
+				    <mat-option>-- None --</mat-option>
+				    <mat-option *ngFor="let op of Operators" [value]="op"> {{op}}</mat-option>
+				  </mat-select>
+				</mat-form-field>
+				
+				<mat-form-field *ngIf="selectedfield.fieldtype === 'Date'" style="margin-left: 15px;">
+				  <input matInput [matDatepicker]="picker1" [formControl]="date">
+				  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+				  <mat-datepicker #picker1></mat-datepicker>
+				</mat-form-field>
+				
+				<mat-form-field *ngIf="selectedfield.fieldtype === 'Numeric' || selectedfield.fieldtype === 'String'" style="margin-left: 15px;">
+      			<input matInput #num maxlength="10" placeholder="Number">
+      			</mat-form-field>
+			</div>
+			
+			<strong>Then</strong>  generate
+			 <mat-form-field style="margin-left: 15px;">
+      			<input matInput #num maxlength="10" placeholder="Number">
+      		</mat-form-field> {{model.name}} records.
+      		
+			<div><strong>Else</strong> generate 
+				<mat-form-field style="margin-left: 15px;">
+      				<input matInput #num maxlength="10" placeholder="Number">
+      			</mat-form-field> {{model.name}} records.</div>
+		</div>   
+	</div>
+	</div>
+	<div>
+	<button type="button" class="btn btn-danger btn-md" (click)="cancel()">Cancel</button>
+	<button type="button" class="btn btn-success btn-md" style="margin-left: 90px;">Generate Data</button>
+	</div>
+	
+</div>

@@ -1,0 +1,14 @@
+.right {
+    float: right;
+}
+
+.debugPanel {
+    float: right;
+    background-color: lightgoldenrodyellow;
+    padding: 15px;
+    margin: 15px;
+}
+
+mat-card {
+	height: 120%;
+}

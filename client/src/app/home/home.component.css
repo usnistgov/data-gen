@@ -1,0 +1,21 @@
+mat-card {
+	width: 800px;
+	margin: 0 auto;
+	background-color: #ffffff
+}
+ul {
+	list-style-type: none;
+}
+
+li {
+	margin: 50px;
+}
+
+.panel-heading {
+    padding-bottom: 15px;
+}
+
+.panel-body {
+    padding-bottom: 30px;
+}
+

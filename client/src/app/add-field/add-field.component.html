@@ -1,0 +1,182 @@
+<mat-card>
+<div class="container">
+    <h4>Field settings</h4>
+    <form [formGroup]="addForm" novalidate>   
+   		<div class="form-group">
+	        <label for="name">Name</label>
+	        <input matInput type="text" class="form-control" name="name" formControlName="name" placeholder="Name" #name>
+	    </div>
+        <div *ngIf="addForm.controls['name'].invalid && (addForm.controls['name'].dirty || addForm.controls['name'].touched)" class="alert alert-danger">
+      		<div *ngIf="addForm.controls['name'].errors.required"> Name is required. </div>
+        </div>
+   </form> 
+   
+ 	<div class="form-group">
+	        <label for="fieldtype">Data Type</label>
+	        <select class="form-control"  [(ngModel)]="selectedfieldType" >
+	          <option *ngFor="let fieldtype of fieldtypes">{{fieldtype}}</option>
+	        </select>
+    </div>     
+
+	<div class="form-group">
+        <label for="constraint">Constraint</label>
+        <select class="form-control" [(ngModel)]="selectedConstraint"  (change)="update()">
+         	<optgroup *ngFor="let group of constraintGroups" [label]="group.name" [disabled]="group.disabled">
+          		<option *ngFor="let constraint of group.constraints" [ngValue]="constraint" >{{constraint.name}}</option>
+          </optgroup>
+        </select>
+       </div> 
+       
+       
+    	<div *ngIf="selectedConstraint.id === 'Range1'">			
+				<div> Date Range Selection</div>
+				<div style="text-align:center">
+				<ngb-datepicker #dp (select)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t"></ngb-datepicker>				
+						<ng-template #t let-date="date" let-focused="focused">
+						  <span class="custom-day"
+						        [class.focused]="focused"
+						        [class.range]="isRange(date)"
+						        [class.faded]="isHovered(date) || isInside(date)"
+						        (mouseenter)="hoveredDate = date"
+						        (mouseleave)="hoveredDate = null">
+						    {{ date.day }}</span>
+						</ng-template>
+				</div>		
+	    </div>
+	    
+	    <div *ngIf="selectedConstraint.id === 'Range3'">
+	    	Start Date 	
+	    	<select class="form-control" [(ngModel)]="variable" (change)="addVariable(variable)" style="margin-left: 15px;">
+		         	<optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+		         		<ng-container *ngFor="let field of datamodel.fields">
+		          		<option *ngIf="field.fieldtype === 'Date'" [ngValue]="field.name" >{{field.name}}
+		          		</option>
+		          		</ng-container>
+		          </optgroup>
+		    </select> 
+		    
+		    End Date
+		    <mat-form-field>
+	    		<input matInput placeholder="End Date" [matDatepicker]="myDatepicker" [(ngModel)]="endDate" (dateInput)="addVariable(endDate)" style="margin-left: 15px;">
+	    		<mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+	    		<mat-datepicker #myDatepicker></mat-datepicker>
+			</mat-form-field>	
+		
+	    </div>
+	    
+	    <div *ngIf="selectedConstraint.id === 'Range2'">	
+	    	Start Date 
+	    	<mat-form-field>
+	    		<input matInput placeholder="End Date" [matDatepicker]="myDatepicker" [(ngModel)]="startDate" (dateInput)="addVariable(startDate)" style="margin-left: 15px;">
+	    		<mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+	    		<mat-datepicker #myDatepicker></mat-datepicker>
+			</mat-form-field>
+			End date 
+			<select class="form-control" [(ngModel)]="variable" (change)="addVariable(variable)" style="margin-left: 15px;">
+		         	<optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+		         		<ng-container *ngFor="let field of datamodel.fields">
+		          		<option *ngIf="field.fieldtype === 'Date'" [ngValue]="field.name" >{{field.name}}
+		          		</option>
+		          		</ng-container>
+		          </optgroup>
+		    </select> 
+	    </div>
+	    	    	    
+	    <div *ngIf="selectedConstraint.id === 'Range4'">	
+	    Start date 
+	    <select class="form-control" [(ngModel)]="variable" (change)="addVariable(variable)" style="margin-left: 15px;">
+		         	<optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+		         		<ng-container *ngFor="let field of datamodel.fields">
+		          		<option *ngIf="field.fieldtype === 'Date'" [ngValue]="field.name" >{{field.name}}
+		          		</option>
+		          		</ng-container>
+		          </optgroup>
+		    </select> 
+		End date
+		<select class="form-control" [(ngModel)]="variable" (change)="addVariable(variable)" style="margin-left: 15px;">
+		         	<optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+		         		<ng-container *ngFor="let field of datamodel.fields">
+		          		<option *ngIf="field.fieldtype === 'Date'" [ngValue]="field.name" >{{field.name}}
+		          		</option>
+		          		</ng-container>
+		          </optgroup>
+		    </select> 
+	    </div>
+	    
+    	
+    	<div *ngIf="selectedConstraint.id === 'SingleValue'">
+    		<div class="form-group" >
+			    <label>Single value </label>
+			    <input matInput type="text" class="form-control" [(ngModel)]="variable"  placeholder="value" name="variable">
+			 </div>  
+    	</div>
+     
+   		<div *ngIf="selectedConstraint.id === 'FromListRand'">
+ 
+	    	<div class="input-group" style="margin-left: 15px;">
+	    	<label>Enter list of values </label>
+                <input type="text" class="form-control" placeholder="enter item" [(ngModel)]="variable" style="margin-left: 15px;"/>
+                <div class="input-group-btn">
+                    <button class="btn btn-primary" type="button" (click)="addVariable(variable)"><span class="glyphicon glyphicon-search"></span></button>
+                </div>
+            </div>
+            
+            <ul class="list-group">
+		        <li *ngFor="let variable of selectedConstraint.variables" class="list-group-item">
+		            <span> {{ variable }} </span>
+		        </li>
+		    </ul>
+		    
+        </div>
+    	<div *ngIf="selectedConstraint.id === 'FromListProb'">
+    	
+    		<div class="input-group">
+	    	<label>Enter value </label>
+                <input type="text" class="form-control" placeholder="enter item" [(ngModel)]="variable" style="margin-left: 15px;"/>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" (click)="addVariable(variable)">Add</button>
+                </div>
+                
+             <label style="margin-left: 15px;">Enter probability</label>
+             <input type="text" class="form-control" placeholder="enter probability" [(ngModel)]="prob" style="margin-left: 15px;"/>
+               <div class="input-group-btn">
+                   <button class="btn btn-primary" type="button" (click)="addVariable(prob)"><span class="glyphicon glyphicon-ok"></span></button>
+               </div>  
+           </div>
+            
+            <ul class="list-group">
+		        <li *ngFor="let variable of selectedConstraint.variables" class="list-group-item">
+		            <span> {{ variable }} </span>
+		        </li>
+		    </ul>
+		    
+    	</div>
+    	
+    	<div *ngIf="selectedConstraint.id === 'SameValField'">
+    		<div class="form-group" >
+			    <label>Choose data element </label>
+			    <select class="form-control" [(ngModel)]="variable">
+		         	<optgroup *ngFor="let datamodel of config.datamodels" [label]="datamodel.name" [disabled]="datamodel.disabled">
+		          		<option *ngFor="let field of datamodel.fields" [ngValue]="field.name" >{{field.name}}</option>
+		          </optgroup>
+		        </select>
+			 </div> 
+    	</div>
+    	
+    	
+    	<div class="form-group">
+		  <label class="col-md-4 control-label" for="submit"></label>
+		  <div class="col-md-8">
+		    <button  name="cancel" class="btn btn-danger" (click)="cancel()" value="2"> Cancel </button>
+			<button  (click)="addVariable(variable) ; addField(name.value, selectedfieldType , selectedConstraint  )" [disabled]="addForm.pristine || addForm.invalid" class="btn btn-success" style="margin-left: 20px;"> Submit </button>		    
+		  </div>
+		</div>
+    	
+     </div>
+     
+   
+		
+	
+
+</mat-card>
+
